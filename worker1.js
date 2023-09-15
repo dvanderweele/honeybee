@@ -4,6 +4,9 @@ const { createMachine, interpret, actions } = require("xstate")
 const crypto = require("crypto")
 var execSync = require("child_process").execSync
 const fs = require("fs")
+const sample = require(
+  "./procStat.js"
+)
 
 const { assign, log } = actions
 const tracer = opentelemetry.trace.getTracer("worker.worker1")
@@ -75,9 +78,7 @@ const job = createMachine({
                   time = parseInt(execSync(
                     "echo $(date +%s%N)"
                   ).toString().trim())
-                  cpu = parseInt(execSync(
-                    "cat /sys/fs/cgroup/cpu/cpuacct.usage"
-                  ).toString().trim())
+                  cpu = sample().all_user_cpu
                   var lastTime = ctx.time
                   var lastCpu = ctx.cpu
                   var cpuUsage = ((cpu - lastCpu) / (time - lastTime)) * 100

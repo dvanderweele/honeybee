@@ -69,6 +69,7 @@ http.createServer((req, res) => {
             innerSpan => {
               console.log("trying to instantiate worker")
               const { path, lock, count } = job
+              console.log("Worker path: " + path)
               innerSpan.setAttribute("workerPath", path)
               const acquired = !Atomics.compareExchange(lock, 0, 0, 1)
               if(acquired){
@@ -94,7 +95,7 @@ http.createServer((req, res) => {
         ]
         span.setAttribute("responseCode", r[0])
         span.setAttribute("responseMessage", r[1])
-        res.writeHead(404)
+        res.writeHead(200)
         res.end()
       } else {
         console.log("Got unknown request.")
